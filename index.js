@@ -32,6 +32,7 @@ const renderDOM = (config, parent = document.body) => {
       renderDOM(child, newElement)
     })
   }
+  return newElement
 }
 
 const DOMStructure = {
