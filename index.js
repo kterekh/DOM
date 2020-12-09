@@ -8,10 +8,44 @@
  * note: config could be extended/changed in any convenient way, e.g. listeners
  */
 
+const setParentAttributes = (element) => {
+  let attrsNames = element.parentNode.getAttributeNames() //[]
+  attrsNames.forEach(attr => {
+    let attrValue = element.parentNode.getAttribute(attr)
+    element.setAttribute(attr, attrValue)
+  })
+}
+
+const renderDOM = (config, parent = document.body) => {
+  const {nodeName} = config
+  //create element
+  let newElement = document.createElement(nodeName)
+  parent.append(newElement)
+  //set innerText & innerHTML
+  if (config.hasOwnProperty('innerText')) {
+    newElement.innerText = config.innerText
+  } else if (config.hasOwnProperty('innerHtml')) {
+    newElement.innerHTML = config.innerHtml
+  }
+  // set attribute
+  setParentAttributes(newElement)
+  if (config.attrs) {
+    Object.entries(config.attrs).forEach(config => {
+      newElement.setAttribute(config[0], config[1])
+    })
+  }
+  //render children
+  if (config.children) {
+    config.children.forEach(child => {
+      renderDOM(child, newElement)
+    })
+  }
+}
+
 const DOMStructure = {
   nodeName: 'div',
   attrs: {
-    class: 'some bem__classes',
+    className: 'some bem__classes',
     width: '100px'
   },
   children: [
@@ -43,31 +77,5 @@ const DOMStructure = {
   ]
 }
 
-const renderDOM = (config, parent = document.body) => {
-// create parent element with attributes
-  let newElement = document.createElement(config.nodeName)
-  newElement.setAttribute('id','result')
-  parent.prepend(newElement)
-  let elemClassName = config.attrs.class
-  let elemWidth = config.attrs.width
-  newElement.setAttribute('class', `${elemClassName}`)
-  newElement.setAttribute('width', `${elemWidth}`)
-
-//create children of parent element with the same attributes + unique attributes
-  for (let element of config.children) {
-    let childName = document.createElement(element.nodeName)
-    newElement.append(childName)
-    childName.setAttribute('class', `${elemClassName}`)
-    childName.setAttribute('width', `${elemWidth}`)
-    if (element.hasOwnProperty('innerText')) {
-      childName.innerText = element.innerText
-    } else if (element.hasOwnProperty('innerHtml')) {
-      childName.innerHTML = element.innerHtml
-    }
-  }
-  let result = document.getElementById('result')
-  console.log(result);
-}
-
-
 renderDOM(DOMStructure)
+
