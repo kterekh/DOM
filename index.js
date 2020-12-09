@@ -8,13 +8,6 @@
  * note: config could be extended/changed in any convenient way, e.g. listeners
  */
 
-const setParentAttributes = (element) => {
-  let attrsNames = element.parentNode.getAttributeNames() //[]
-  attrsNames.forEach(attr => {
-    let attrValue = element.parentNode.getAttribute(attr)
-    element.setAttribute(attr, attrValue)
-  })
-}
 
 const renderDOM = (config, parent = document.body) => {
   const {nodeName} = config
@@ -28,10 +21,9 @@ const renderDOM = (config, parent = document.body) => {
     newElement.innerHTML = config.innerHtml
   }
   // set attribute
-  setParentAttributes(newElement)
   if (config.attrs) {
-    Object.entries(config.attrs).forEach(config => {
-      newElement.setAttribute(config[0], config[1])
+    Object.entries(config.attrs).forEach(attribute => {
+      newElement.setAttribute(attribute[0], attribute[1])
     })
   }
   //render children
